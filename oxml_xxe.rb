@@ -6,7 +6,6 @@ require 'highline'
 require 'fileutils'
 require './helper'
 
-
 # Global variables, these can be hardcoded to save time
 @input_file = ""
 @ip = ""
@@ -37,9 +36,6 @@ def select_payload
 	payload = ""
 	choose do |menu|
 		menu.prompt = "Choose XXE payload:"	
-		ploads.each do |pload|
-			menu.choice pload[0] do payload = pload[1][0] end
-		end
 		menu.choice "Print XXE Payload Values" do 
 			i = 0
 			ploads.each do |pload|
@@ -49,7 +45,9 @@ def select_payload
 			main
 			exit
 		end
-		
+		ploads.each do |pload|
+			menu.choice pload[0] do payload = pload[1][0] end
+		end		
 	end
 	if payload =~ /IP/ and @ip.size == 0
 		@ip = ask("Payload Requires a connect back IP:")
@@ -100,11 +98,15 @@ end
 
 
 # Allow the user to specify their input file
-def list_files_menu
+def list_files_menu(string_replace)
 	if(@input_file.size > 0)
 		# TODO check if this exists
 		puts "|+| Using #{@input_file}"
-		choose_file(@input_file)
+		if string_replace
+				find_string
+		else
+			choose_file(@input_file)
+		end
 	else
 		docx = ask("Please Enter Input File (Defaults to samples/sample.docx):")
 		if docx.downcase == "Q"
@@ -113,13 +115,17 @@ def list_files_menu
 			docx = @input_file.size == 0 ? docx : @input_file
 			docx = docx.size == 0 ? "./samples/sample.docx" : docx
 			@input_file = docx
-			
-			# check if file exists
-			if File.file?(docx)		
-				puts "|+| #{docx} Loaded\n"
-				choose_file(docx)
+	
+			if string_replace
+				find_string
 			else
-				puts "|!| #{docx} cannot be found."
+				# check if file exists
+				if File.file?(docx)		
+					puts "|+| #{docx} Loaded\n"
+					choose_file(docx)
+				else
+					puts "|!| #{docx} cannot be found."
+				end
 			end
 		end
 	end
@@ -159,8 +165,8 @@ def main
 		puts "\n"
 		choose do |menu|
 			menu.prompt = "Select Options"
-			menu.choice "Build XE Document" do list_files_menu end
-			menu.choice "Build XE Document and Replace Strings" do find_string end
+			menu.choice "Build XE Document" do list_files_menu(false) end
+			menu.choice "Build XE Document and Replace Strings" do list_files_menu(true) end
 			menu.choice "Set Global Variables" do set_globals end
 			menu.choice "Quit" do exit end
 		end

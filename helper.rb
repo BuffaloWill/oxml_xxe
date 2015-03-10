@@ -46,26 +46,6 @@ end
 
 # The string replacement functionality, it's painfully hardcoded right now
 def find_string
-	if(@input_file.size > 0)
-		# TODO check if this exists
-		puts "|+| Using #{@input_file}"
-	else
-		docx = ask("Please Enter Input File (Defaults to samples/sample.docx):")
-		if docx.downcase == "Q"
-			return
-		else
-			docx = docx.size == 0 ? "./samples/sample.docx" : docx
-			@input_file = docx
-			# check if file exists
-			if File.file?(docx)		
-				puts "|+| #{docx} Loaded"
-			else
-				puts "|!| #{docx} cannot be found."
-				find_string
-			end
-		end
-	end
-	
 	payloadx = select_payload
 	
 	puts "|+| Checking for § in #{@input_file}..."
