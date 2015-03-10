@@ -4,6 +4,8 @@ require 'zipruby'
 require 'highline/import'
 require 'highline'
 require 'fileutils'
+require './helper'
+
 
 # Global variables, these can be hardcoded to save time
 @input_file = ""
@@ -28,20 +30,6 @@ def read_payloads()
 	return pl
 end
 
-# takes in a docx and returns a list of files
-def list_files(docx)
-	files = []
-	Zip::Archive.open(docx, Zip::CREATE) do |zipfile|
-		n = zipfile.num_files # gather entries
-    
-		n.times do |i|
-			entry_name = zipfile.get_name(i) # get entry name from archive
-			files.push(entry_name)
-		end
-	end
-	return files
-end
-
 # This method retrieves the payloads and allows the user to assign a payload
 #	that will be used in the document. 
 def select_payload
@@ -63,17 +51,17 @@ def select_payload
 		end
 		
 	end
-	if payload[1] =~ /IP/ and @ip.size == 0
+	if payload =~ /IP/ and @ip.size == 0
 		@ip = ask("Payload Requires a connect back IP:")
-		payload[1] = payload[1].gsub("IP",@ip)	
+		payload = payload.gsub("IP",@ip)	
 	end
-	if payload[1] =~ /FILE/ and @payload_file.size == 0
+	if payload =~ /FILE/ and @payload_file.size == 0
 		@file_payload = ask("Payload Requires a file to check for:")	
-		payload[1] = payload[1].gsub("FILE",@file_payload)	
+		payload = payload.gsub("FILE",@file_payload)	
 	end
-	if payload[1] =~ /PORT/ and @port.size == 0
+	if payload =~ /PORT/ and @port.size == 0
 		@port = ask("Payload allows for connect back port to be specified:")	
-		payload[1] = payload[1].gsub("PORT",@port)	
+		payload = payload.gsub("PORT",@port)	
 	end
 	
 	return payload
@@ -98,7 +86,7 @@ def add_payload(name,payloadx)
 			document = f.read # read entry content
 		end
 	end
-	docx_xml = payload(document,payloadx[1])
+	docx_xml = payload(document,payloadx)
 
 	# get file ext
 	ext = @input_file.split(".").last
@@ -188,7 +176,7 @@ def find_string
 				document = f.read # read entry content
 			end
 		end
-		docx_xml = payload(document,payloadx[1])
+		docx_xml = payload(document,payloadx)
 		
 		# replace string
 		docx_xml = docx_xml.gsub("§","&xxe;")
