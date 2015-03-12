@@ -37,7 +37,7 @@ OptionParser.new do |opts|
 	end
 end.parse!
 
-if (@options["build"]==nil and @options["string"]==nil and @options["payload_list"]==nil)
+if (@options["build"]==false and @options["string"]==false and @options["payload_list"]==false)
 	puts "\n Usage: oxml_xxe.rb [options]; \n\t-b or -s are required; -h for help\n\n"
 	exit
 end
