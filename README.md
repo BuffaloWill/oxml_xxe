@@ -1,7 +1,8 @@
 # oxml_xxe
 This tool is meant to help test XXE vulnerabilities in OXML document formats.
 
-BH USA 2015 Presenetation:
+BH USA 2015 Presentation:
+
 [Exploiting XXE in File Upload Functionality](http://oxmlxxe.github.io/reveal.js/slides.html#/)
 
 Blog Posts on the topic:
