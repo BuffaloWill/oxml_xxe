@@ -16,7 +16,6 @@ Installation is easy, you will need a copy of Ruby and two gems.
 ```
 gem install highline
 gem install zipruby
-
 ```
 
 or
