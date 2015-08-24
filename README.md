@@ -1,5 +1,10 @@
 # oxml_xxe
-This tool is meant to help test XXE vulnerabilities in OXML document formats.
+This tool is meant to help test XXE vulnerabilities in ~~OXML document~~ file formats. Currently supported:
+
+- DOCX/XLSX/PPTX
+- ODT
+- PDF
+- GIF (experimental)
 
 BH USA 2015 Presentation:
 
@@ -39,6 +44,14 @@ ruby oxml_xxe.rb -s -i 192.168.14.1:8000
 
 Select payload 11 ("remote_DTD")
 ```
+
+## Build a XLSX with XXE (connecting back to 192.168.14.1:8000)
+```
+ruby oxml_xxe.rb -f samples/sample.xlsx -s -i 192.168.14.1:8000
+
+Select payload 11 ("remote_DTD")
+```
+
 
 # Main Modes
 
