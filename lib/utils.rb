@@ -306,6 +306,8 @@ def list_files_menu(string_replace)
 			else
 				choose_file(@options["file"])
 			end
+		else
+			puts "|!| #{@options["file"]} cannot be found. Set with -f or modify config.json"
 		end
 		exit
 	else
