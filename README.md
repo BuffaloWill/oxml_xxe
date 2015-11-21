@@ -9,7 +9,7 @@ This tool is meant to help test XXE vulnerabilities in ~~OXML document~~ file fo
 
 BH USA 2015 Presentation:
 
-[Exploiting XXE in File Upload Functionality](http://oxmlxxe.github.io/reveal.js/slides.html#/) [(Recorded Webcast)](https://www.blackhat.com/html/webcast/11192015-exploiting-xml-entity-vulnerabilities-in-file-parsing-functionality.html)
+[Exploiting XXE in File Upload Functionality (Slides)](http://oxmlxxe.github.io/reveal.js/slides.html#/) [(Recorded Webcast)](https://www.blackhat.com/html/webcast/11192015-exploiting-xml-entity-vulnerabilities-in-file-parsing-functionality.html)
 
 Blog Posts on the topic:
 
