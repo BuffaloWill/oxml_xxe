@@ -129,7 +129,6 @@ if @options["poc"]
 		@options["ip"] = ask("Payload Requires a connect back IP:")
 	end
 
-	# patch for smb, needs to be refactored throughout
 	@options["ip"] = set_protocol(@options["ip"]).gsub('\\') {'\\\\'}
 	payload = payload.gsub("IP",@options["ip"])
 

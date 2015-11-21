@@ -26,7 +26,7 @@ def select_payload
 	end
 	if payload =~ /IP/ and @options["ip"].size == 0
 		@options["ip"] = ask("Payload Requires a connect back IP:")
-		@options["ip"] = set_protocol(@options["ip"])
+		@options["ip"] = set_protocol(@options["ip"]).gsub('\\') {'\\\\'}
 		payload = payload.gsub("IP",@options["ip"])
 	end
 	if payload =~ /FILE/ and @options["exfiltrate"].size == 0
