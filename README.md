@@ -4,6 +4,7 @@ This tool is meant to help test XXE vulnerabilities in ~~OXML document~~ file fo
 - DOCX/XLSX/PPTX
 - ODT
 - PDF
+- JPG
 - GIF (experimental)
 
 BH USA 2015 Presentation:
