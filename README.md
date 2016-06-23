@@ -32,6 +32,13 @@ gem install bundler
 bundle install
 ```
 
+To install on  Kali Linux (rolling), if you receive the error "ERROR:  Error installing zipruby", you will need to run the following commands before installing zipruby (there may be other solutions).
+
+
+```
+gpg2 --keyserver hkp://keys.gnupg.net --recv-keys 409B6B1796C275462A1703113804BB82D39DC0E3
+\curl -sSL https://get.rvm.io | bash -s stable --ruby
+```
 # Quick Examples
 
 ## Build a PDF with XXE in XMP (metadata)
