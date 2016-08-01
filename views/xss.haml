@@ -1,0 +1,30 @@
+.span5
+  %br
+  %h3 XSS/String Entity in File
+  %table{:style => 'width: 70%;'}
+    %tbody
+    %form{:method => 'post', :action => "/xss", :enctype=>"multipart/form-data"}
+      %tr
+        %td{:style => 'width: 30%'}
+          File To Replace
+        %td{:style => 'width: 70%'}
+          %input{:type => 'file', :name => 'file'}
+      %tr
+        %td{:style => 'width: 30%'}
+          String to Insert
+        %td{:style => 'width: 70%'}
+          %input{:type => 'text', :style => 'width: 90%', :name => 'xss', :value => "<script>alert(document.cookie)</script>"}
+      %tr
+        %td{:style => 'width: 30%'}
+          Wrap in CDATA Tag
+        %td{:style => 'width: 70%'}
+          %input{:type => 'checkbox', :style => 'width: 90%', :name => 'cdata'}
+      %tr
+        %td{:style => 'width: 30%'}
+          Description of Result
+        %td{:style => 'width: 70%'}
+          %input{:type => 'text', :style => 'width: 90%', :name => 'desc', :value => ""}
+      %tr
+        %td{:style => 'width: 30%'}
+          %input{:type => 'submit', :value => 'Build' }
+
