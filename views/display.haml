@@ -1,0 +1,15 @@
+.span5
+  %br
+  %h3 Upload File to Display
+  %table{:style => 'width: 70%;'}
+    %tbody
+    %form{:method => 'post', :action => "/display_file", :enctype=>"multipart/form-data"}
+      %tr
+        %td{:style => 'width: 30%'}
+          File To View
+        %td{:style => 'width: 70%'}
+          %input{:type => 'file', :name => 'file'}
+      %tr
+        %td{:style => 'width: 30%'}
+          %input{:type => 'submit', :value => 'Display' }
+
