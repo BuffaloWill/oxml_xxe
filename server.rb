@@ -107,7 +107,7 @@ post '/build' do
 	file = Oxfile.new
 	file.filename = fn.split('/').last
 	file.location = fn
-	file.desc = URI.escape(params["desc"])
+	file.desc = clean_html(params["desc"])
 	file.type = params["file_type"]
 	file.save
 
@@ -153,8 +153,8 @@ post '/replace' do
 		file = Oxfile.new
 		file.filename = fn.split('/').last
 		file.location = fn
-		file.desc = URI.escape(params["desc"])
-		file.type = fn.split('.	').last
+		file.desc = clean_html(params["desc"])
+		file.type = fn.split('.').last
 		file.save
 
 		send_file(fn, :filename => "#{fn.split('/').last}")
