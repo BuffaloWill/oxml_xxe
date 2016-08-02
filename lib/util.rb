@@ -255,17 +255,20 @@ def string_replace(payload,input_file,ip,exfiltrate)
 end
 
 def clean_xml(code)
+	return code unless code
 	# take in xml, clean for display in UI
 	code = code.gsub(">","&gt;\n")
 	code = code.gsub("<","&lt;")
 	code = code.gsub("           ","")
-	p code
 	return code
 end
 
 def clean_html(code)
-	# take
-
+	return code unless code
+	code = code.gsub(">","&gt;\n")
+	code = code.gsub("<","&lt;")
+	code = code.gsub("           ","")
+	return code
 end
 
 def display_file(rand_file)

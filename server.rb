@@ -194,7 +194,7 @@ post '/xss' do
 		file = Oxfile.new
 		file.filename = fn.split('/').last
 		file.location = fn
-		file.desc = URI.escape(params["desc"])
+		file.desc = clean_html(params["desc"])
 		file.type = fn.split('.').last
 		file.save
 
@@ -225,9 +225,15 @@ post '/poc' do
 		fn = jpg_poc(ip)
 	end
 
-	send_file fn, :type => params["file_type"], :filename => "#{fn.split('/').last}"
+	# write entry to database
+	file = Oxfile.new
+	file.filename = fn.split('/').last
+	file.location = fn
+	file.desc = clean_html(params["desc"])
+	file.type = params["file_type"]
+	file.save
 
-	haml :poc, :encode_html => true
+	send_file fn, :type => params["file_type"], :filename => "#{fn.split('/').last}"
 end
 
 get '/list' do
