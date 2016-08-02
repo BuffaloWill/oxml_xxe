@@ -1,7 +1,5 @@
 # encoding: ASCII-8BIT
 require 'zipruby'
-require 'highline/import'
-require 'highline'
 require 'fileutils'
 require 'json'
 
