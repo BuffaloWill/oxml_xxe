@@ -2,7 +2,6 @@ source 'https://rubygems.org'
 
 ruby "2.1.5"
 
-gem 'zipruby'
 gem 'sinatra'
 gem 'haml'
 gem 'zipruby', '0.3.6'
