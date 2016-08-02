@@ -22,6 +22,7 @@
             %a{:class => 'btn btn-warning', :href => "/delete?id=#{file.id}"}
               %span{:class => 'glyphicon glyphicon-remove', :title => 'Delete'}
           %td{:style => 'width: 70%'}
-            %a{:class => 'btn btn-success', :href => "/view_file?id=#{file.id}"}
-              %span{:class => 'glyphicon glyphicon-zoom-in', :title => 'View Structure'}
+            - if !(file.type == "pdf" or file.type == "jpg" or file.type == "gif")
+              %a{:class => 'btn btn-success', :href => "/view_file?id=#{file.id}"}
+                %span{:class => 'glyphicon glyphicon-zoom-in', :title => 'View Structure'}
 
