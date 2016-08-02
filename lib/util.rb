@@ -281,6 +281,12 @@ def display_file(rand_file)
 		file["id"] = 0
 		file["contents"] = clean_xml(File.open(rand_file, "rb").read)
 		@files = [file]
+	elsif ext =~ /pdf/ or ext =~ /jpg/ or ext =~ /gif/
+		file = {}
+		file["name"] = "PDF/JPG/GIF"
+		file["id"] = 0
+		file["contents"] = "NOT AN XML FILE"
+		@files = [file]
 	else
 		Zip::Archive.open(rand_file, Zip::CREATE) do |zipfile|
 			n = zipfile.num_files # gather entries
