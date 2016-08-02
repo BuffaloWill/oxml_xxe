@@ -1,8 +1,0 @@
-{
-"file":"./samples/sample.docx",
-"ip":"",
-"exfiltrate":"",
-"build":false,
-"string":false,
-"payload_list":false
-}
