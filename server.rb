@@ -21,6 +21,8 @@ end
 
 # TODO apply to all xml in docx
 # TODO OOB is incorrect
+# TODO explain each menu item in help
+# TODO soft link content types
 
 set :options, JSON.parse(File.read('./options.json'))
 set :protocols, ["http","https","ftp","jar","file","netdoc","mailto","gopher","none"]
@@ -277,12 +279,46 @@ end
 
 get '/delete' do
 	file = Oxfile.first(:id => params["id"])
+	if file == nil
+		redirect '/list'
+	end
 	file.destroy if file
-	File.delete(file.file_location) if file
+	File.delete(file.location) if file.location
 	redirect '/list'
 end
 
 get '/help' do
 	@payloads = read_payloads()
 	haml :help
+end
+
+get '/overwrite' do
+	haml :overwrite, :encode_html => true
+end
+
+post '/overwrite' do
+	if params[:file] == nil
+		return "Error, no file included"
+	end
+	if params[:xml_file] == nil
+		return "Error, no xml_file specified"
+	end
+
+	input_file = params[:file][:tempfile].read
+	nname = "temp_#{Time.now.to_i}_"
+	ext = params[:file][:filename].split('.').last
+	rand_file = "./output/#{nname}_z.#{ext}"
+	File.open(rand_file, 'wb') {|f| f.write(input_file) }
+
+	fn = insert_payload_docx(rand_file,params["xml_file"],params[:xml_content],'','',true)
+
+	# write entry to database
+	file = Oxfile.new
+	file.filename = fn.split('/').last
+	file.location = fn
+	file.desc = clean_html(params["desc"])
+	file.type = fn.split('.').last
+	file.save
+
+	send_file(fn, :filename => "#{fn.split('/').last}")
 end

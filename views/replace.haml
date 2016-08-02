@@ -15,6 +15,7 @@
         %td{:style => 'width: 70%'}
           %select{ :name => "payload"}
             - @payloads.each do |k,v|
+              - next if k =~ /Parameter/
               %option #{k}
       %tr
         %td{:style => 'width: 30%'}

