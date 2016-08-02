@@ -23,7 +23,6 @@ end
 # TODO explain each menu item in help
 # TODO soft link content types
 
-set :options, JSON.parse(File.read('./options.json'))
 set :protocols, ["http","https","ftp","jar","file","netdoc","mailto","gopher","none"]
 set :types, ["docx","pptx","xlsx","svg","odt","xml","odg","odp","ods"]
 set :poc_types, ["pdf","jpg","gif"]
