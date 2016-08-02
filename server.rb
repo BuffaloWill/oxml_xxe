@@ -94,7 +94,7 @@ post '/build' do
 	end
 
 	if oxmls.include?(params["file_type"])
-		xml_file = params["xml_file"] ? params["xml_file"] : oxmls[params["file_type"]][1]
+		xml_file = params["xml_file"].size > 0 ? params["xml_file"] : oxmls[params["file_type"]][1]
 		file_exploit = oxmls[params["file_type"]][0]
 		fn = insert_payload_docx(file_exploit,xml_file,pl[params["payload"]][0],ip,params["exfil_file"])
 	elsif params["file_type"] == "svg"
