@@ -13,7 +13,3 @@
             .info{ :id => "info_#{file["id"]}", :class => "collapse out" }
               %pre{:class => "pre-scrollable"}
                 #{file["contents"]}
-            %span{:class=>"glyphicon glyphicon-bullhorn","data-toggle"=>"collapse", "data-target"=>"#info_#{file["id"]}-raw"}
-            .info{ :id => "info_#{file["id"]}-raw", :class => "collapse out" }
-              %pre{:class => "pre-scrollable"}
-                #{file["contents"].gsub("\n","")}

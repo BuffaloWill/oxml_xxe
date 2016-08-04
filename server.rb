@@ -308,7 +308,13 @@ post '/overwrite' do
 	rand_file = "./output/#{nname}_z.#{ext}"
 	File.open(rand_file, 'wb') {|f| f.write(input_file) }
 
-	fn = insert_payload_docx(rand_file,params["xml_file"],params[:xml_content],'','',true)
+	if params[:replace_file] != nil
+		contents = params[:replace_file][:tempfile].read
+	else
+		contents = params[:xml_content]
+	end
+	p contents
+	fn = insert_payload_docx(rand_file,params["xml_file"],contents,'','',true)
 
 	# write entry to database
 	file = Oxfile.new
