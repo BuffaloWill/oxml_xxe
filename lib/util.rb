@@ -79,7 +79,7 @@ def insert_payload_docx(ffile,name,payloadx,ip,exfil)
 end
 
 # overridden method for replacing entire xml files
-def insert_payload_docx(ffile,name,payloadx,ip,exfil,bool_replace_xml)
+def insert_payload_docx_(ffile,name,payloadx,ip,exfil,bool_replace_xml)
 	document = ""
 
 	# Read in the XLSX and grab the #{name}

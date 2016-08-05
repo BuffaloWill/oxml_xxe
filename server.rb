@@ -314,7 +314,7 @@ post '/overwrite' do
 		contents = params[:xml_content]
 	end
 	p contents
-	fn = insert_payload_docx(rand_file,params["xml_file"],contents,'','',true)
+	fn = insert_payload_docx_(rand_file,params["xml_file"],contents,'','',true)
 
 	# write entry to database
 	file = Oxfile.new
