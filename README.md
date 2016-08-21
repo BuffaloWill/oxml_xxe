@@ -23,22 +23,32 @@ OXML_XXE was re-written in Ruby using Sinatra, Bootstrap, and Haml. Installation
 
 - You will need a copy of Ruby. RVM is suggested (https://rvm.io/rvm/install). ruby version 2.1.5 is supported.
 
-```
-rvm install 2.1.5
-rvm use 2.1.5
-```
-
 - If you are running Ubuntu (or also verified on Kali) you will need a couple of dependencies:
 ```
 apt-get install libsqlite3-dev libxslt-dev libxml2-dev zlib1g-dev gcc
 ```
 
+To install RVM:
+```
+gpg --keyserver hkp://keys.gnupg.net --recv-keys 409B6B1796C275462A1703113804BB82D39DC0E3
+\curl -sSL https://get.rvm.io | bash
+```
+
+Install Ruby 2.1.5 with RVM
+```
+rvm install 2.1.5
+rvm use 2.1.5
+```
+
+Install dependencies and start the server:
 ```
 cd oxml_xxe
 gem install bundler
 bundle install
 ruby server.rb
 ```
+
+Browse to http://127.0.0.1:4567 to get started.
 
 # Main Modes
 
