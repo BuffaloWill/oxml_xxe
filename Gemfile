@@ -4,7 +4,7 @@ ruby "2.1.5"
 
 gem 'sinatra'
 gem 'haml'
-gem 'zipruby', '0.3.6'
+gem 'rubyzip'
 gem 'json'
 gem 'nokogiri'
 gem 'data_mapper', '1.2.0'

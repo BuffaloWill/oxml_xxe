@@ -2,7 +2,6 @@
 require 'rubygems'
 require 'sinatra'
 require 'haml'
-require 'zipruby'
 require 'json'
 require 'fileutils'
 require 'optparse'

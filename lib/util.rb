@@ -1,7 +1,24 @@
 # encoding: ASCII-8BIT
-require 'zipruby'
+require 'zip'
 require 'fileutils'
 require 'json'
+
+
+def docx_modify(rand_file,docx_xml,fil_r)
+	Zip::File.open(rand_file) do |zipfile|
+	  zipfile.get_output_stream(fil_r) {|f| f.write(docx_xml)}
+	end
+end
+
+def read_rels(zipfile,fil_r)
+	content_types = ""
+
+	Zip::File.open(zipfile) do |zipfile|
+	  content_types = zipfile.read(fil_r)
+	end
+
+	return content_types
+end
 
 # Insert the payload into every XML document in the document
 def add_payload_all(fz,payload)
@@ -13,7 +30,7 @@ end
 # takes in a docx and returns a list of files
 def list_files(docx)
 	files = []
-	Zip::Archive.open(docx, Zip::CREATE) do |zipfile|
+	Zip::File.open(docx, Zip::File::CREATE) do |zipfile|
 		n = zipfile.num_files # gather entries
 
 		n.times do |i|
@@ -35,33 +52,19 @@ def add_payload_of(fz,payloadx,of)
 
 	fz.each do |name|
 
-		document = ""
-		# Read in the XLSX and grab the document.xml
-		Zip::Archive.open(rand_file, Zip::CREATE) do |zipfile|
-			zipfile.fopen(name) do |f|
-				document = f.read # read entry content
-			end
-		end
+		document = read_rels(rand_file,"#{name}")
 
 		docx_xml = payload(document,payloadx)
 
-		Zip::Archive.open(rand_file, Zip::CREATE) do |zipfile|
-			zipfile.add_or_replace_buffer(name,
-									  docx_xml)
-		end
+		docx_modify(rand_file, docx_xml, name)
+
 	end
 	puts "|+| Created #{rand_file}"
 end
 
 def insert_payload_docx(ffile,name,payloadx,ip,exfil)
-	document = ""
+	document = read_rels(ffile,"#{name}")
 
-	# Read in the XLSX and grab the #{name}
-	Zip::Archive.open(ffile, Zip::CREATE) do |zipfile|
-		zipfile.fopen(name) do |f|
-			document = f.read # read entry content
-		end
-	end
 	# get file ext
 	ext = ffile.split(".").last
 	nname = "output_#{Time.now.to_i}_#{name.gsub(".","_").gsub("/","_")}"
@@ -70,24 +73,15 @@ def insert_payload_docx(ffile,name,payloadx,ip,exfil)
 	docx_xml = payload(document,payloadx,ip,exfil)
 
 	FileUtils::copy_file(ffile,rand_file)
-	Zip::Archive.open(rand_file, Zip::CREATE) do |zipfile|
-		zipfile.add_or_replace_buffer(name,
-								  docx_xml)
-	end
+	docx_modify(rand_file, docx_xml, name)
 
 	return rand_file
 end
 
 # overridden method for replacing entire xml files
 def insert_payload_docx_(ffile,name,payloadx,ip,exfil,bool_replace_xml)
-	document = ""
+	document = read_rels(ffile,"#{name}")
 
-	# Read in the XLSX and grab the #{name}
-	Zip::Archive.open(ffile, Zip::CREATE) do |zipfile|
-		zipfile.fopen(name) do |f|
-			document = f.read # read entry content
-		end
-	end
 	# get file ext
 	ext = ffile.split(".").last
 	nname = "output_#{Time.now.to_i}_#{name.gsub(".","_").gsub("/","_")}"
@@ -97,10 +91,7 @@ def insert_payload_docx_(ffile,name,payloadx,ip,exfil,bool_replace_xml)
 	docx_xml = payloadx if bool_replace_xml
 
 	FileUtils::copy_file(ffile,rand_file)
-	Zip::Archive.open(rand_file, Zip::CREATE) do |zipfile|
-		zipfile.add_or_replace_buffer(name,
-								  docx_xml)
-	end
+	docx_modify(rand_file, docx_xml, name)
 
 	return rand_file
 end
@@ -212,16 +203,13 @@ end
 def string_replace(payload,input_file,ip,exfiltrate)
 	targets = []
 
-	Zip::Archive.open(input_file, Zip::CREATE) do |zipfile|
-		n = zipfile.num_files # gather entries
-
-		n.times do |i|
-			nm = zipfile.get_name(i)
-			zipfile.fopen(nm) do |f|
-				document = f.read # read entry content
-				if document =~ /§/
-					targets.push(nm)
-				end
+	Zip::File.open(input_file) do |zipfile|
+		zipfile.each do |entry|
+			nm = entry.name
+			document = read_rels(input_file,"#{nm}")
+			next unless document.valid_encoding?
+			if document =~ /§/
+				targets.push(nm)
 			end
 		end
 	end
@@ -238,23 +226,14 @@ def string_replace(payload,input_file,ip,exfiltrate)
 
 	targets.each do |target|
 
-		document = ""
-		# Read in the XLSX and grab the document.xml
-		Zip::Archive.open(rand_file, Zip::CREATE) do |zipfile|
-			zipfile.fopen(target) do |f|
-				document = f.read # read entry content
-			end
-		end
+		document = read_rels(rand_file,"#{target}")
 
 		docx_xml = payload(document,payload,ip,exfiltrate)
 
 		# replace string
 		docx_xml = docx_xml.gsub("§","&xxe;")
 
-		Zip::Archive.open(rand_file, Zip::CREATE) do |zipfile|
-			zipfile.add_or_replace_buffer(target,
-									  docx_xml)
-		end
+		docx_modify(rand_file, docx_xml, target)
 	end
 
 	return rand_file
@@ -294,26 +273,24 @@ def display_file(rand_file)
 		file["contents"] = "NOT AN XML FILE"
 		@files = [file]
 	else
-		Zip::Archive.open(rand_file, Zip::CREATE) do |zipfile|
-			n = zipfile.num_files # gather entries
-
-			n.times do |i|
+		Zip::File.open(rand_file) do |zipfile|
+			num = 0
+			zipfile.each do |entry|
 				file = {}
-				nm = zipfile.get_name(i)
-				file["name"] = nm
-				file["id"] = i
+				nm = entry.name
+				file["name"] = entry.name
+				file["id"] = num
 				if nm =~ /xml/ or nm =~ /_rels/ or nm =~ /Cont/
-					zipfile.fopen(nm) do |f|
-						document = f.read
-						if document
-							file["contents"] = clean_xml(document) # read entry content
-						else
-							file["contents"] = "EMPTY FILE"
-						end
+					document = entry.get_input_stream.read
+					if document
+						file["contents"] = clean_xml(document) # read entry content
+					else
+						file["contents"] = "EMPTY FILE"
 					end
 				else
 					file["contents"] = "NOT AN XML FILE"
 				end
+				num = num + 1
 				@files.push(file)
 			end
 		end
