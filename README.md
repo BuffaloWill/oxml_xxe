@@ -17,6 +17,8 @@ Blog Posts on the topic:
 
 [Exploiting XXE Vulnerabilities in OXML Documents - Part 1](http://www.silentrobots.com/blog/2015/03/04/oxml_xxe/)
 
+[Exploiting CVE-2016-4264 With OXML_XXE](https://www.silentrobots.com/blog/2016/10/02/exploiting-cve-2016-4264-with-oxml-xxe/)
+
 # Developer Build
 
 OXML_XXE was re-written in Ruby using Sinatra, Bootstrap, and Haml. Installation should be easy:
