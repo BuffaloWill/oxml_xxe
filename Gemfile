@@ -9,4 +9,4 @@ gem 'json'
 gem 'nokogiri'
 gem 'data_mapper', '1.2.0'
 gem 'dm-sqlite-adapter', '1.2.0'
-
+gem 'mustermann', '0.4.0'
