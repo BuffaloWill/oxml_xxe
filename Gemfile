@@ -2,7 +2,7 @@ source 'https://rubygems.org'
 
 ruby "2.1.5"
 
-gem 'sinatra'
+gem 'sinatra', '1.4.7'
 gem 'haml'
 gem 'rubyzip'
 gem 'json'
