@@ -23,7 +23,7 @@ Blog Posts on the topic:
 
 OXML_XXE was re-written in Ruby using Sinatra, Bootstrap, and Haml. Installation should be easy:
 
-- You will need a copy of Ruby. RVM is suggested (https://rvm.io/rvm/install). ruby version 2.1.5 is supported.
+- You will need a copy of Ruby. RVM is suggested (https://rvm.io/rvm/install). ruby version 2.3.5 is supported.
 
 - If you are running Ubuntu (or also verified on Kali) you will need a couple of dependencies:
 ```
@@ -36,10 +36,10 @@ gpg --keyserver hkp://keys.gnupg.net --recv-keys 409B6B1796C275462A1703113804BB8
 \curl -sSL https://get.rvm.io | bash
 ```
 
-Install Ruby 2.1.5 with RVM
+Install Ruby 2.3.5 with RVM
 ```
-rvm install 2.1.5
-rvm use 2.1.5
+rvm install 2.3.5
+rvm use 2.3.5
 ```
 
 Install dependencies and start the server:
