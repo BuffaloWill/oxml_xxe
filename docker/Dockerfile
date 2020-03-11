@@ -7,5 +7,4 @@ RUN git clone --depth=1 https://github.com/BuffaloWill/oxml_xxe.git /oxml_xxe &&
     bundle install
 WORKDIR /oxml_xxe
 EXPOSE 4567
-ENTRYPOINT ["ruby", "server.rb"]
-CMD ["-o", "0.0.0.0"]
+ENTRYPOINT ["ruby", "server.rb", "-o", "0.0.0.0"]
