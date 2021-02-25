@@ -1,6 +1,6 @@
 # Archived
 
-This project is archived. If someone has a working and _maintained_ fork please let me know and I point people there. Thank you to all of you. This was a fun project and a technique that yieled (and still yields) interesting research. 
+This project is archived. If someone has a working and _maintained_ fork please let me know and I will point people there. Thank you to all of you. This was a fun project and a technique that yieled (and still yields) interesting research. 
 
 # oxml_xxe
 This tool is meant to help test XXE vulnerabilities in ~~OXML document~~ file formats. Currently supported:
