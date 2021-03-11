@@ -64,7 +64,7 @@ get '/build' do
 	@types = settings.types
 	@payloads = settings.payloads
 	@protos = settings.protocols
-	haml :build, :encode_html => true
+	haml :build
 end
 
 post '/build' do
@@ -114,7 +114,7 @@ get '/replace' do
 	@types = settings.types
 	@payloads = settings.payloads
 	@protos = settings.protocols
-	haml :replace, :encode_html => true
+	haml :replace
 end
 
 post '/replace' do
@@ -158,7 +158,7 @@ post '/replace' do
 end
 
 get '/xss' do
-	haml :xss, :encode_html => true
+	haml :xss
 end
 
 post '/xss' do
@@ -201,7 +201,7 @@ get '/poc' do
 	@types = settings.poc_types
 	@protos = settings.protocols
 
-	haml :poc, :encode_html => true
+	haml :poc
 end
 
 post '/poc' do
@@ -234,7 +234,7 @@ end
 get '/list' do
 	@files = Oxfile.all()
 
-	haml :list, :encode_html => true
+	haml :list
 end
 
 get '/download' do
@@ -245,7 +245,7 @@ get '/download' do
 end
 
 get '/display' do
-	haml :display, :encode_html => true
+	haml :display
 end
 
 post '/display_file' do
@@ -260,7 +260,7 @@ post '/display_file' do
 	File.open(rand_file, 'wb') {|f| f.write(input_file) }
 
 	@files = display_file(rand_file)
-	haml :display_file, :encode_html => true
+	haml :display_file
 end
 
 get '/view_file' do
@@ -272,7 +272,7 @@ get '/view_file' do
 	rand_file = file.location
 
 	@files = display_file(rand_file)
-	haml :display_file, :encode_html => true
+	haml :display_file
 end
 
 get '/delete' do
@@ -291,7 +291,7 @@ get '/help' do
 end
 
 get '/overwrite' do
-	haml :overwrite, :encode_html => true
+	haml :overwrite
 end
 
 post '/overwrite' do

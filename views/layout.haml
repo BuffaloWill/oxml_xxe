@@ -34,16 +34,15 @@
       .navbar-inner
         %ul.nav{"class" => "padded"}
           %li
-            %a{:href => '/help'}
-              %h2
-                OXML XXE
+            %h2
+              OXML XXE
     .container-fluid
       .row-fluid
         .span2
           %br
           %br
           %ul.nav.nav-list
-            %li.nav-header Options Menu
+            %li.nav-header Menu
             %li
               %a{ :href => '/build' } Build a File
             %li
@@ -60,4 +59,6 @@
               %a{ :href => '/list' } List Previously Built Files
             %li
               %a{ :href => '/display' } Display OXML Contents
+            %li
+              %a{ :href => '/help' } Help
         =yield
