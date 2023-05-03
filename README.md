@@ -24,7 +24,7 @@ OXML_XXE was re-written in Ruby using Sinatra, Bootstrap, and Slim.
 2. Browse to http://localhost:4567/ to get started.
 
 ## Docker Compose
-1. Run `docker-compose up`
+1. Run `docker-compose up --build`
 2. Browse to http://localhost:4567/ to get started.
 
 ## Ubuntu
