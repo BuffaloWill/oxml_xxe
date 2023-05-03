@@ -60,10 +60,10 @@ GEM
       tilt
     json (1.8.6)
     json_pure (1.8.6)
-    mini_portile2 (2.3.0)
+    mini_portile2 (2.4.0)
     multi_json (1.15.0)
-    nokogiri (1.8.1)
-      mini_portile2 (~> 2.3.0)
+    nokogiri (1.10.10)
+      mini_portile2 (~> 2.4.0)
     public_suffix (4.0.6)
     rack (1.6.13)
     rack-protection (1.5.5)
@@ -86,7 +86,7 @@ DEPENDENCIES
   dm-sqlite-adapter (= 1.2.0)
   haml (= 5.0.4)
   json (= 1.8.6)
-  nokogiri (= 1.8.1)
+  nokogiri (= 1.10.10)
   rubyzip (= 1.2.1)
   sinatra (= 1.4.8)
 
