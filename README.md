@@ -1,7 +1,3 @@
-# Archived
-
-This project is archived. If someone has a working and _maintained_ fork please let me know and I will point people there. Thank you to all of you. This was a fun project and a technique that yieled (and still yields) interesting research.
-
 # oxml_xxe
 This tool is meant to help test XXE vulnerabilities in **OXML document** file formats. Currently supported:
 
@@ -9,9 +5,6 @@ This tool is meant to help test XXE vulnerabilities in **OXML document** file fo
 - ODT/ODG/ODP/ODS
 - SVG
 - XML
-- PDF (experimental)
-- JPG (experimental)
-- GIF (experimental)
 
 BH USA 2015 Presentation: [Exploiting XXE in File Upload Functionality (Slides)](http://oxmlxxe.github.io/reveal.js/slides.html#/) [(Recorded Webcast)](https://www.blackhat.com/html/webcast/11192015-exploiting-xml-entity-vulnerabilities-in-file-parsing-functionality.html)
 
@@ -22,7 +15,7 @@ Blog Posts on the topic:
 
 # Developer Build
 
-OXML_XXE was re-written in Ruby using Sinatra, Bootstrap, and Haml. Installation should be easy with Docker:
+OXML_XXE was re-written in Ruby using Sinatra, Bootstrap, and Slim. Installation should be easy with Docker:
 
 1. Run `docker-compose up`
 2. Browse to http://localhost:4567/ to get started.

@@ -264,7 +264,9 @@ def display_file(rand_file)
 		file = {}
 		file["name"] = "XML/SVG FILE"
 		file["id"] = 0
-		file["contents"] = clean_xml(File.open(rand_file, "rb").read)
+		#		file["contents"] = clean_xml(File.open(rand_file, "rb").read)
+		file["contents"] = File.open(rand_file, "rb").read
+
 		@files = [file]
 	elsif ext =~ /pdf/ or ext =~ /jpg/ or ext =~ /gif/
 		file = {}
@@ -283,7 +285,8 @@ def display_file(rand_file)
 				if nm =~ /xml/ or nm =~ /_rels/ or nm =~ /Cont/
 					document = entry.get_input_stream.read
 					if document
-						file["contents"] = clean_xml(document) # read entry content
+						#file["contents"] = clean_xml(document) # read entry content
+						file["contents"] = document
 					else
 						file["contents"] = "EMPTY FILE"
 					end

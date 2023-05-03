@@ -1,0 +1,61 @@
+doctype html
+html
+  head
+    meta charset='utf-8'
+    title OXML XXE
+    link href="/bootstrap/css/bootstrap.min.css" rel="stylesheet"
+    link href="/bootstrap/css/bootstrap-responsive.min.css" rel="stylesheet"
+    link href="/bootstrap/css/font-awesome.min.css" rel="stylesheet"
+  body
+    script src="/bootstrap/js/jquery.min.js"
+    script src="/bootstrap/js/bootstrap-collapse.min.js"
+    style
+      | body {
+      |   padding-top: 60px;
+      |   padding-bottom: 40px;
+      |   background-color: #ffffff;
+      | }
+      | td {
+      |   padding: 10px;
+      | }
+      | .padded {
+      |   padding-top: 20px;
+      |   padding-bottom: 5px;
+      |   padding-left: 5px;
+      |   padding-right: 0px;
+      | }
+      | .sidebar-nav {
+      |   padding: 9px 0;
+      | }
+  body
+    nav.navbar.navbar-fixed-top
+      .navbar-inner
+        ul.nav.padded
+          li
+            h2 OXML XXE
+    .container-fluid
+      .row-fluid
+        .span2
+          br
+          ul.nav.nav-list
+            li.nav-header Menu
+            li
+              a href="/build" Build a File
+            li
+              a href="/poc" Build PDF/GIF/JPG PoC (Experimental)
+            li
+              a href="/replace" String Replace in a File
+            li
+              a href="/xss" XSS/String Entity in File
+            li
+              a href="/overwrite" Overwrite file inside DOCX/etc.
+            br
+            br
+            li
+              a href="/list" List Previously Built Files
+            li
+              a href="/display" Display OXML Contents
+            li
+              a href="/help" Help
+        .span5
+          == yield
