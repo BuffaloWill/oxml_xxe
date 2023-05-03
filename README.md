@@ -15,7 +15,7 @@ Blog Posts on the topic:
 
 # Developer Build
 
-OXML_XXE was re-written in Ruby using Sinatra, Bootstrap, and Slim. Installation should be easy with Docker:
+OXML_XXE was re-written in Ruby using Sinatra, Bootstrap, and Slim.
 
 ## Docker
 
@@ -26,6 +26,24 @@ OXML_XXE was re-written in Ruby using Sinatra, Bootstrap, and Slim. Installation
 ## Docker Compose
 1. Run `docker-compose up`
 2. Browse to http://localhost:4567/ to get started.
+
+## Ubuntu
+
+Install dependencies:
+```bash
+apt-get install -y make git libsqlite3-dev libxslt-dev libxml2-dev zlib1g-dev gcc ruby2.7 
+```
+
+Bundle install:
+```bash
+gem install bundler
+bundle install
+```
+
+Start the service:
+```bash
+ruby server.rb
+```
 
 # Main Modes
 
