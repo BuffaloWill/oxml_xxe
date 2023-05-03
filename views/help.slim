@@ -1,0 +1,61 @@
+.span9
+  br
+  h3 Help
+  table style='width: 100%;'
+    h4 Payload Descriptions
+    tbody
+      tr
+        td style='width: 15%'
+          | Payload Name
+        td style='width: 50%'
+          | Payload Description
+        td style='width: 35%'
+          | Details
+      - @payloads.each do |k,v|
+        tr
+          td style='width: 15%'
+            = k
+          td style='width: 50%'
+            = v[1]
+          td style='width: 35%'
+            = clean_xml(v[0]).gsub("\n","")
+  table style='width: 100%;'
+    h4 Payload Variables
+    tbody
+      tr
+        td style='width: 10%'
+          | Name
+        td style='width: 55%'
+          | Description
+        td style='width: 35%'
+          | Example
+      tr
+        td style='width: 10%'
+          | IP
+        td style='width: 55%'
+          | Hostname/IP to connect back to.
+        td style='width: 35%'
+          pre class="pre-scrollable"
+            | 127.0.0.1
+          pre class="pre-scrollable"
+            | myhost.myurl.tld
+      tr
+        td style='width: 10%'
+          | FILE
+        td style='width: 55%'
+          | File to exfiltrate. For "plain" payloads, the full value to insert.
+        td style='width: 35%'
+          pre class="pre-scrollable"
+            | \/etc/passwd
+          pre class="pre-scrollable"
+            | file://etc/passwd
+      tr
+        td style='width: 10%'
+          | Protocol
+        td style='width: 55%'
+          | The protocol is inserted at the before IP. Select "none" to add your own.
+        td style='width: 35%'
+          pre class="pre-scrollable"
+            | http://[IP]
+          pre class="pre-scrollable"
+            | jar://[IP]

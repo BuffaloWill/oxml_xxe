@@ -6,21 +6,34 @@ require 'json'
 require 'fileutils'
 require 'optparse'
 require 'json'
-
 require './lib/util'
-require './lib/model'
+require 'sequel'
 
 if not File.file?('./db/master.db')
     puts "|+| Database does not exist, initializing a blank one."
     out_file = File.new("./db/master.db", "w")
     out_file.puts("")
     out_file.close
+		DB = Sequel.sqlite("#{Dir.pwd}/db/master.db")
+
+		DB.create_table :oxfiles do
+			primary_key :id
+			String :filename
+			String :location
+			String :desc
+			String :type
+			DateTime :created_at
+			DateTime :updated_at
+		end
+
 end
+require './lib/model'
 
 # TODO apply to all xml in docx
 # TODO explain each menu item in help
 # TODO soft link content types
 
+set :public_folder, File.dirname(__FILE__) + '/public'
 set :protocols, ["http","https","ftp","jar","file","netdoc","mailto","gopher","none"]
 set :types, ["docx","pptx","xlsx","svg","odt","xml","odg","odp","ods"]
 set :poc_types, ["pdf","jpg","gif"]
@@ -63,7 +76,7 @@ get '/build' do
 	@types = settings.types
 	@payloads = settings.payloads
 	@protos = settings.protocols
-	haml :build
+  slim :build
 end
 
 post '/build' do
@@ -99,12 +112,13 @@ post '/build' do
 	end
 
 	# write entry to database
-	file = Oxfile.new
-	file.filename = fn.split('/').last
-	file.location = fn
-	file.desc = clean_html(params["desc"])
-	file.type = params["file_type"]
-	file.save
+  x = Oxfile.new
+  x.filename = fn.split('/').last
+  x.location = fn
+  x.desc = clean_html(params["desc"])
+  x.type = params["file_type"]
+  p x
+  x.save
 
 	send_file(fn, :filename => "#{fn.split('/').last}")
 end
@@ -113,7 +127,7 @@ get '/replace' do
 	@types = settings.types
 	@payloads = settings.payloads
 	@protos = settings.protocols
-	haml :replace
+  slim :replace
 end
 
 post '/replace' do
@@ -144,12 +158,15 @@ post '/replace' do
 	if fn == "|-|"
 		"|-| Could not find § in document, please verify."
 	else
-		# write entry to database
-		file = Oxfile.new
-		file.filename = fn.split('/').last
-		file.location = fn
-		file.desc = clean_html(params["desc"])
-		file.type = fn.split('.').last
+		# create a new Oxfile instance with attributes set
+		file = Oxfile.new(
+			:filename => fn.split('/').last,
+			:location => fn,
+			:desc => clean_html(params["desc"]),
+			:type => fn.split('.').last
+		)
+
+		# save the instance to the database
 		file.save
 
 		send_file(fn, :filename => "#{fn.split('/').last}")
@@ -157,7 +174,7 @@ post '/replace' do
 end
 
 get '/xss' do
-	haml :xss
+  slim :xss
 end
 
 post '/xss' do
@@ -171,7 +188,8 @@ post '/xss' do
 	rand_file = "./output/#{nname}_z.#{ext}"
 	File.open(rand_file, 'wb') {|f| f.write(input_file) }
 
-	# TODO logic check if svg or xml
+	# TODO add an option to add an xss wherever
+  # TODO logic check if svg or xml
 	# TODO modify uri
 	# TODO add a supported types box
 	# TODO add a non-entity replacement option
@@ -180,9 +198,10 @@ post '/xss' do
 	xss = "<!DOCTYPE root [<!ENTITY xxe \"<![CDATA[#{params[:xss]}]>\">]>" if params[:cdata]
 
 	fn = string_replace(xss,rand_file,"","")
-
 	if fn == "|-|"
-		"|-| Could not find § in document, please verify."
+    error =	"|-| Could not find § in document, please verify."
+    puts error
+    slim :error
 	else
 		# write entry to database
 		file = Oxfile.new
@@ -200,7 +219,7 @@ get '/poc' do
 	@types = settings.poc_types
 	@protos = settings.protocols
 
-	haml :poc
+  slim :poc
 end
 
 post '/poc' do
@@ -231,9 +250,10 @@ post '/poc' do
 end
 
 get '/list' do
-	@files = Oxfile.all(:order => :id.desc)
+	@files = Oxfile.all
+  p @files
 
-	haml :list
+  slim :list
 end
 
 get '/download' do
@@ -244,7 +264,7 @@ get '/download' do
 end
 
 get '/display' do
-	haml :display
+  slim :display
 end
 
 post '/display_file' do
@@ -259,7 +279,7 @@ post '/display_file' do
 	File.open(rand_file, 'wb') {|f| f.write(input_file) }
 
 	@files = display_file(rand_file)
-	haml :display_file
+  slim :display_file
 end
 
 get '/view_file' do
@@ -271,7 +291,7 @@ get '/view_file' do
 	rand_file = file.location
 
 	@files = display_file(rand_file)
-	haml :display_file
+  slim :display_file
 end
 
 get '/delete' do
@@ -286,11 +306,11 @@ end
 
 get '/help' do
 	@payloads = read_payloads()
-	haml :help
+  slim :help
 end
 
 get '/overwrite' do
-	haml :overwrite
+  slim :overwrite
 end
 
 post '/overwrite' do

@@ -1,0 +1,29 @@
+.span5
+  br
+  h3 Create PoC File
+  table style="width: 70%;"
+    tbody
+      form method="post" action="/poc"
+        tr
+          td style="width: 30%"
+            | File Type
+          td style="width: 70%"
+            select name="file_type"
+              - @types.each do |type|
+                option= type
+        tr
+          td style="width: 30%"
+            | Connect Back Protocol
+          td style="width: 70%"
+            select name="proto"
+              - @protos.each do |proto|
+                option= proto
+        tr
+          td style="width: 30%"
+            | Connect Back Hostname/IP (IP in payload)
+          td style="width: 70%"
+            input type="text" style="width: 90%" name="hostname" value="127.0.0.1:53"
+        tr
+          td style="width: 30%"
+            input type="submit" value="Build"
+
