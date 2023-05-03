@@ -17,6 +17,13 @@ Blog Posts on the topic:
 
 OXML_XXE was re-written in Ruby using Sinatra, Bootstrap, and Slim. Installation should be easy with Docker:
 
+## Docker
+
+1. Run `docker build --tag oxml_xxe .`
+2. Run `docker run --name oxml_xxe -p 4567:4567 --rm oxml_xxe`
+2. Browse to http://localhost:4567/ to get started.
+
+## Docker Compose
 1. Run `docker-compose up`
 2. Browse to http://localhost:4567/ to get started.
 
