@@ -215,7 +215,7 @@ def string_replace(payload,input_file,ip,exfiltrate)
 	end
 
 	if targets.size == 0
-		return "|-| Could not find § in document, please verify."
+		raise StandardError, "Error: Could not find § in document, please verify."
 	end
 
 	# get file ext
