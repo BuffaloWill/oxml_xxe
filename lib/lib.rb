@@ -88,7 +88,7 @@ def replace_file(params)
   # xml_file (required):
 
   if params[:file] == nil
-    return StandardError, "Error no file included"
+    raise StandardError, "Error no file included"
   end
 
   pl = read_payloads()

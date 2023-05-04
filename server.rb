@@ -76,19 +76,17 @@ get '/replace' do
 end
 
 post '/replace' do
-	if fn == "|-|"
-		"|-| Could not find § in document, please verify."
-  else
-		# write entry to database
-		x = Oxfile.new
-		x.filename = fn.split('/').last
-		x.location = fn
-		x.desc = clean_html(params["desc"])
-		x.type = fn.split('.').last
-		x.save
+  fn = replace_file(params)
 
-		send_file(fn, :filename => "#{fn.split('/').last}")
-	end
+	# write entry to database
+	x = Oxfile.new
+	x.filename = fn.split('/').last
+	x.location = fn
+	x.desc = clean_html(params["desc"])
+	x.type = fn.split('.').last
+	x.save
+
+	send_file(fn, :filename => "#{fn.split('/').last}")
 end
 
 get '/xss' do
