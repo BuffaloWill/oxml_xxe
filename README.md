@@ -10,12 +10,12 @@ BH USA 2015 Presentation: [Exploiting XXE in File Upload Functionality (Slides)]
 
 Blog Posts on the topic:
 
-- [Exploiting XXE Vulnerabilities in OXML Documents](http://www.silentrobots.com/blog/2015/03/04/oxml_xxe/)
-- [Exploiting CVE-2016-4264 With OXML_XXE](https://www.silentrobots.com/blog/2016/10/02/exploiting-cve-2016-4264-with-oxml-xxe/)
+- [Exploiting XXE Vulnerabilities in OXML Documents](https://www.silentrobots.com/exploiting-xxe-in-file-upload-functionality/)
+- [Exploiting CVE-2016-4264 With OXML_XXE](https://www.silentrobots.com/exploiting-cve-2016-4264-with-oxml_xxe/)
 
-# Developer Build
+# Installation
 
-OXML_XXE was re-written in Ruby using Sinatra, Bootstrap, and Slim.
+OXML_XXE was written in Ruby using Sinatra, Bootstrap, and Slim.
 
 ## Docker
 
@@ -45,7 +45,7 @@ Start the service:
 ruby server.rb
 ```
 
-# Main Modes
+# Usage
 
 **1. Build a File**
 
