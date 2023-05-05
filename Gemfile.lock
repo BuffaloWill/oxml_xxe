@@ -1,16 +1,16 @@
 GEM
   remote: https://rubygems.org/
   specs:
+    daemons (1.4.1)
+    eventmachine (1.2.7)
     haml (6.1.1)
       temple (>= 0.8.2)
       thor
       tilt
     json (2.6.3)
-    mini_portile2 (2.8.2)
     mustermann (3.0.0)
       ruby2_keywords (~> 0.0.1)
-    nokogiri (1.14.3)
-      mini_portile2 (~> 2.8.0)
+    nokogiri (1.14.3-x86_64-linux)
       racc (~> 1.4)
     racc (1.6.2)
     rack (2.2.7)
@@ -27,14 +27,18 @@ GEM
     slim (5.1.0)
       temple (~> 0.10.0)
       tilt (>= 2.0.6, < 2.2)
-    sqlite3 (1.6.2)
-      mini_portile2 (~> 2.8.0)
+    sqlite3 (1.6.2-x86_64-linux)
     temple (0.10.0)
+    thin (1.8.2)
+      daemons (~> 1.0, >= 1.0.9)
+      eventmachine (~> 1.0, >= 1.0.4)
+      rack (>= 1, < 3)
     thor (1.2.1)
     tilt (2.1.0)
+    yaml (0.2.1)
 
 PLATFORMS
-  ruby
+  x86_64-linux
 
 DEPENDENCIES
   haml
@@ -43,12 +47,14 @@ DEPENDENCIES
   rack
   rubyzip
   sequel
-  sinatra
+  sinatra (> 2.0.0)
   slim
   sqlite3
+  thin
+  yaml
 
 RUBY VERSION
-   ruby 2.7.7p221
+   ruby 3.2.2p53
 
 BUNDLED WITH
-   2.1.4
+   2.4.12
