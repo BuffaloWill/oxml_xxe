@@ -45,12 +45,6 @@ Start the service:
 ruby server.rb
 ```
 
-# Usage
+# Examples
 
-**1. Build a File**
-
-Build mode adds a `DOCTYPE` and inserts the XML Entity into the file of the users choice.
-
-**2. String Replace in File**
-
-String replacement mode goes through and looks for the symbol `§` in the document. The XML Entity ("&xxe;") replaces any instances of this symbol. Note, you can open the document in and insert `§` anywhere to have it replaced. The common use case would be a web application which reads in a `xlsx` and then prints the results to the screen. Exploiting the XXE it would be possible to have the contents printed to the screen.
+See: https://github.com/BuffaloWill/oxml_xxe/wiki/python-docx
