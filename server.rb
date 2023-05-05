@@ -167,7 +167,6 @@ end
 
 get '/list' do
 	@files = Oxfile.all
-  p @files
 
   slim :list
 end
