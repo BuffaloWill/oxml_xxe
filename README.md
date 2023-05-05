@@ -31,7 +31,7 @@ OXML_XXE was written in Ruby using Sinatra, Bootstrap, and Slim.
 
 Install dependencies:
 ```bash
-apt-get install -y make git libsqlite3-dev libxslt-dev libxml2-dev zlib1g-dev gcc ruby2.7 
+apt-get install -y make git libsqlite3-dev libxslt-dev libxml2-dev zlib1g-dev gcc ruby3.2 g++
 ```
 
 Bundle install:
