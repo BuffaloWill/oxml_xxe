@@ -11,8 +11,7 @@ def upload_file():
             document = docx.Document(file)
             main_content = '\n\n'.join([paragraph.text for paragraph in document.paragraphs])
             # Print the main content to the console
-            print(main_content)
-            return 'File uploaded and parsed successfully!'
+            return 'File uploaded and parsed successfully!' + "\n"+main_content
     return render_template('upload.html')
 
 if __name__ == '__main__':

