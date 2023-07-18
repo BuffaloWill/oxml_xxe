@@ -6,11 +6,9 @@ RUN apt-get update && \
 
 WORKDIR /oxml_xxe
 
-# install deps
-COPY Gemfile ./
-RUN bundle install
-
+# Copy and install deps
 COPY . .
+RUN bundle install
 
 EXPOSE 4567
 CMD ["bundle", "exec", "ruby", "server.rb", "-o", "0.0.0.0", "-p", "4567"]
