@@ -1,5 +1,7 @@
 source "https://rubygems.org"
 
+# quick comment on ruby-far-cry-sample
+
 ruby "3.2.2"
 
 gem "slim"  
